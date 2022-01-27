@@ -3,6 +3,7 @@ export interface SIDStatus {
   key: string;
   executionID: string;
   status: string;
+  errorDescription?: string;
 }
 
 

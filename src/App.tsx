@@ -40,7 +40,10 @@ function App() {
     key: '',
     executionID: '',
     status: '',
+    errorDescription: '',
   })
+  const [visible, setVisible] = useState(false)
+
 
   useEffect(() => {
     setLoading(true)
@@ -63,21 +66,24 @@ function App() {
       })
   }, [])
 
+  const onRow = useCallback((record) => {
+    return {
+      onClick: () => {
+        setVisible(true)
+        setCurrentSID(record)
+      },
+    }
+  }, [])
+
   return (
     <div className="App">
-      <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+      <Modal title="Basic Modal" visible={visible} onOk={handleOk} onCancel={handleCancel}>
+        <p>Error Description</p>
+        <p></p>
       </Modal>
+
       <Table
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              console.log(record)
-            },
-          }
-        }}
+        onRow={onRow}
         columns={columns}
         dataSource={paginated.data}
         loading={loading}
