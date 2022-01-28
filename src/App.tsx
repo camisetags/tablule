@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Table, TablePaginationConfig, Modal } from 'antd'
 import SiDStatusService, { PaginatedSIDStatus } from './service'
 import { SIDStatus } from './data'
@@ -27,7 +27,7 @@ const columns = [
   },
 ]
 
-function App() {
+const App: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [paginated, setPaginated] = useState<PaginatedSIDStatus>({
     data: [],
