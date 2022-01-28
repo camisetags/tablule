@@ -1,30 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Table, TablePaginationConfig, Modal } from 'antd'
+import { Table, TablePaginationConfig, Modal, Input, Row, Col } from 'antd'
 import SiDStatusService, { PaginatedSIDStatus } from './service'
 import { SIDStatus } from './data'
 
 
 const columns = [
-  {
-    title: 'Integration Name',
-    dataIndex: 'integrationName',
-    key: 'integrationName',
-  },
-  {
-    title: 'Key',
-    dataIndex: 'key',
-    key: 'key',
-  },
-  {
-    title: 'Execution ID',
-    dataIndex: 'executionID',
-    key: 'executionID',
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-  },
+  { title: 'Integration Name', dataIndex: 'integrationName', key: 'integrationName' },
+  { title: 'Key', dataIndex: 'key', key: 'key' },
+  { title: 'Execution ID', dataIndex: 'executionID', key: 'executionID' },
+  { title: 'Status', dataIndex: 'status', key: 'status' },
 ]
 
 const App: React.FC = () => {
@@ -47,7 +31,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setLoading(true)
-    SiDStatusService.getAll(1, 5)
+    SiDStatusService.getAll({ page: 1, limit: 5 })
       .then(status => {
         setPaginated(status)
         setLoading(false)
@@ -59,7 +43,7 @@ const App: React.FC = () => {
     if (pagination.current) { current = pagination.current }
 
     setLoading(true)
-    SiDStatusService.getAll(current, pagination.pageSize)
+    SiDStatusService.getAll({ page: current, limit: pagination.pageSize || 10 })
       .then(status => {
         setPaginated(status)
         setLoading(false)
@@ -71,16 +55,40 @@ const App: React.FC = () => {
       onClick: () => {
         setVisible(true)
         setCurrentSID(record)
+        SiDStatusService.getByKey(record.key)
+          .then(status => status && setCurrentSID(status))
       },
     }
   }, [])
 
+  const setVisibilityOff = useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    setVisible(false)
+  }, [])
+
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoading(true)
+    SiDStatusService.getAll({ page: 1, limit: 50, searchInput: e.target.value })
+      .then(status => {
+        setPaginated(status)
+        setLoading(false)
+      })
+  }, [])
+
   return (
     <div className="App">
-      <Modal title="Basic Modal" visible={visible} onOk={handleOk} onCancel={handleCancel}>
-        <p>Error Description</p>
-        <p></p>
+      <Modal title="Basic Modal" visible={visible} onOk={setVisibilityOff} onCancel={setVisibilityOff}>
+        <p><b>Execution ID: </b>{currentSID.executionID} <b>Key: </b>{currentSID.key}</p>
+        <br />
+        <p><b>Error Description</b></p>
+        <p>{currentSID.errorDescription}</p>
       </Modal>
+
+      <Row style={{ padding: 8 }}>
+        <Col span={8} />
+        <Col span={8} offset={8}>
+          <Input placeholder="Search for element" onChange={handleSearch} />
+        </Col>
+      </Row>
 
       <Table
         onRow={onRow}
@@ -88,9 +96,8 @@ const App: React.FC = () => {
         dataSource={paginated.data}
         loading={loading}
         pagination={paginated}
-        onChange={handleTableChange}
-      />
-    </div>
+        onChange={handleTableChange} />
+    </div >
   )
 }
 
