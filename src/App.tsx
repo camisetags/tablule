@@ -5,9 +5,9 @@ import { SIDStatus } from './data'
 
 
 const columns = [
-  { title: 'Integration Name', dataIndex: 'integrationName', key: 'integrationName' },
+  { title: 'Integration Name', dataIndex: 'sub_domain', key: 'sub_domain' },
   { title: 'Key', dataIndex: 'key', key: 'key' },
-  { title: 'Execution ID', dataIndex: 'executionID', key: 'executionID' },
+  { title: 'Execution ID', dataIndex: 'execution_id', key: 'execution_id' },
   { title: 'Status', dataIndex: 'status', key: 'status' },
 ]
 
@@ -20,9 +20,9 @@ const App: React.FC = () => {
     pageSize: 10,
   })
   const [currentSID, setCurrentSID] = useState<SIDStatus>({
-    integrationName: '',
+    sub_domain: '',
     key: '',
-    executionID: '',
+    execution_id: '',
     status: '',
     errorDescription: '',
   })
@@ -31,7 +31,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setLoading(true)
-    SiDStatusService.getAll({ page: 1, limit: 5 })
+    SiDStatusService.getAll({ page: 1, limit: 10   })
       .then(status => {
         setPaginated(status)
         setLoading(false)
@@ -77,7 +77,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <Modal title="Basic Modal" visible={visible} onOk={setVisibilityOff} onCancel={setVisibilityOff}>
-        <p><b>Execution ID: </b>{currentSID.executionID} <b>Key: </b>{currentSID.key}</p>
+        <p><b>Execution ID: </b>{currentSID.execution_id} <b>Key: </b>{currentSID.key}</p>
         <br />
         <p><b>Error Description</b></p>
         <p>{currentSID.errorDescription}</p>

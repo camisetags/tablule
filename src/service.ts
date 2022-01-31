@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { data, SIDStatus } from './data';
+import { SIDStatus } from './data';
 // import axios from 'axios';
 
 export interface PaginatedSIDStatus {
@@ -15,31 +15,33 @@ interface SearchPayload {
   searchInput?: string;
 }
 
+
 const SIDStatusService = {
+
   // Implement axios calls here
-  async getAll({ page = 1, limit = 10, searchInput }: SearchPayload): Promise<PaginatedSIDStatus> {
-    // axios.get('http://localhost:3000/api/v1/sid-status', {})
-    //   .then(response => {})  
-    const pageCount = (page - 1) * limit;
-    const limitCount = page * limit;
-    const result = data.slice(pageCount, limitCount);
+  async getAll({ page = 1, limit = 3, searchInput }: SearchPayload): Promise<PaginatedSIDStatus> {
+    
+    const results = await axios.get('http://127.0.0.1:5000/task/page/1?per_page=6')
+      .then(response => response.data)
+    
+    console.log(results)
 
     const withSearchResult = searchInput
-      ? result.filter(item => item.key.includes(searchInput) || item.executionID.includes(searchInput))
-      : result
+      ? results.data.filter((item: any) => item.key.includes(searchInput) || item.execution_id.includes(searchInput))
+      : results.data
 
     // Just change this call to a axios with limit and offset
     return Promise.resolve({
       data: withSearchResult,
-      total: data.length,
-      current: page,
-      pageSize: limit
+      total: results.data.length,
+      current: results.current,
+      pageSize: results.pageSize
     });
   },
 
   async getByKey(key: string): Promise<SIDStatus | null> {
-    const result = await Promise
-      .resolve(data.find(item => item.key === key));
+    const result: SIDStatus = await Promise
+      .resolve(data.find((item: any) => item.key === key));
     return result ? result : null;
   }
 }
