@@ -21,7 +21,7 @@ const SIDStatusService = {
   // Implement axios calls here
   async getAll({ page = 1, limit = 3, searchInput }: SearchPayload): Promise<PaginatedSIDStatus> {
     
-    const results = await axios.get('http://127.0.0.1:5000/task/page/1?per_page=6')
+    const results = await axios.get('http://54.163.16.30:80/task/page/1?per_page=6')
       .then(response => response.data)
     
     console.log(results)
