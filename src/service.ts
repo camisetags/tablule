@@ -15,34 +15,40 @@ interface SearchPayload {
   searchInput?: string;
 }
 
+export interface Task {
+  status: string
+  key: string
+  execution_id: string
+  create_date: string
+  sub_domain: string
+  error_description?: string
+}
+
+export interface PaginatedTask {
+  data: Task[];
+  total: number;
+  current: number;
+  pageSize: number;
+}
 
 const SIDStatusService = {
 
   // Implement axios calls here
-  async getAll({ page = 1, limit = 3, searchInput }: SearchPayload): Promise<PaginatedSIDStatus> {
-    
-    const results = await axios.get('http://54.163.16.30:80/task/page/1?per_page=6')
+  async getAll({ page = 1, limit = 5, searchInput }: SearchPayload): Promise<PaginatedTask> {
+    const results = await axios.get<PaginatedTask>(`http://54.163.16.30:80/task/page/${page}?per_page=${limit}`)
       .then(response => response.data)
-    
-    console.log(results)
 
-    const withSearchResult = searchInput
-      ? results.data.filter((item: any) => item.key.includes(searchInput) || item.execution_id.includes(searchInput))
-      : results.data
-
-    // Just change this call to a axios with limit and offset
-    return Promise.resolve({
-      data: withSearchResult,
-      total: results.data.length,
-      current: results.current,
-      pageSize: results.pageSize
-    });
+    return results;
   },
 
-  async getByKey(key: string): Promise<SIDStatus | null> {
-    const result: SIDStatus = await Promise
-      .resolve(data.find((item: any) => item.key === key));
-    return result ? result : null;
+  async getByKey(key: string): Promise<Task | null> {
+    const result = await axios.get<Task>(`http://54.165.4.227:80/task/${key}`)
+
+    if (result.status === 200) {
+      return result.data
+    }
+
+    throw new Error('Task not found')
   }
 }
 

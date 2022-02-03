@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Table, TablePaginationConfig, Modal, Input, Row, Col } from 'antd'
-import SiDStatusService, { PaginatedSIDStatus } from './service'
+import SiDStatusService, { PaginatedSIDStatus, PaginatedTask, Task } from './service'
 import { SIDStatus } from './data'
 
 
@@ -13,25 +13,26 @@ const columns = [
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false)
-  const [paginated, setPaginated] = useState<PaginatedSIDStatus>({
+  const [paginated, setPaginated] = useState<PaginatedTask>({
     data: [],
     total: 0,
     current: 1,
-    pageSize: 10,
+    pageSize: 5,
   })
-  const [currentSID, setCurrentSID] = useState<SIDStatus>({
+  const [currentSID, setCurrentSID] = useState<Task>({
     sub_domain: '',
-    key: '',
+    key: 'lala',
     execution_id: '',
     status: '',
-    errorDescription: '',
+    error_description: '',
+    create_date: '',
   })
   const [visible, setVisible] = useState(false)
 
 
   useEffect(() => {
     setLoading(true)
-    SiDStatusService.getAll({ page: 1, limit: 10   })
+    SiDStatusService.getAll({ page: 1, limit: 5 })
       .then(status => {
         setPaginated(status)
         setLoading(false)
@@ -80,7 +81,7 @@ const App: React.FC = () => {
         <p><b>Execution ID: </b>{currentSID.execution_id} <b>Key: </b>{currentSID.key}</p>
         <br />
         <p><b>Error Description</b></p>
-        <p>{currentSID.errorDescription}</p>
+        <p>{currentSID.error_description}</p>
       </Modal>
 
       <Row style={{ padding: 8 }}>
