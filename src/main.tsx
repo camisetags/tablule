@@ -25,7 +25,7 @@ ReactDOM.render(
           <App />
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>Me mama aí ©2022</Footer>
+      <Footer style={{ textAlign: 'center' }}>Company name ©2022</Footer>
     </Layout>,
   </React.StrictMode>,
   document.getElementById('root')
